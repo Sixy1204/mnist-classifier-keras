@@ -21,10 +21,10 @@ y_test = np_utils.to_categorical(y_test, num_classes=10)
 model = Sequential([
     Dense(128, input_dim=784),
     Activation('relu'),
-    Dropout(0.2),
-    Dense(128, input_dim=784),
+    Dropout(0.5),
+    Dense(128),
     Activation('relu'),
-    Dropout(0.2),
+    Dropout(0.5),
     Dense(10),
     Activation('softmax'),
 ])
