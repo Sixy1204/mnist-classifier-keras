@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 #%matplotlib
+from sklearn.cross_validation import train_test_split
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
@@ -14,18 +15,24 @@ from keras.utils import np_utils
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
 # data pre-processing
-X_train = X_train.reshape(X_train.shape[0], -1) / 255.   # normalize
+X = X_train.reshape(X_train.shape[0], -1) / 255.   # normalize
+y = np_utils.to_categorical(y_train, num_classes=10)
+#split X and y to train data set and validation set
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.2, random_state=0)
+#test set
 X_test = X_test.reshape(X_test.shape[0], -1) / 255.      # normalize
-y_train = np_utils.to_categorical(y_train, num_classes=10)
 y_test = np_utils.to_categorical(y_test, num_classes=10)
 
 #build your neural net
 model = Sequential([
     #avoid intermediate layers with fewer than final outputs dimensional units
-    Dense(384, input_dim=784), 
+    Dense(512, input_dim=784), 
     Activation('relu'),
     Dropout(0.5), #avoid overfitting
-    Dense(384, input_dim=784),
+    Dense(512, input_dim=784), 
+    Activation('relu'),
+    Dropout(0.5), #avoid overfitting
+    Dense(512, input_dim=784), 
     Activation('relu'),
     Dropout(0.5), #avoid overfitting
     Dense(10),
@@ -42,7 +49,7 @@ model.compile(optimizer=rmsprop,
 
 print('Training ------------')
 # train the model
-mf=model.fit(X_train, y_train, epochs=7, batch_size=300, validation_data=(X_test, y_test))
+mf=model.fit(X_train, y_train, epochs=13 , batch_size=500, validation_data=(X_val, y_val))
 
 #Plotting the training and validation loss
 mf_dict=mf.history
@@ -57,6 +64,7 @@ plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
 
+#Plotting the training and validation accuracy
 plt.figure('accuracy')
 train_acc = mf_dict['acc']
 val_acc = mf_dict['val_acc']
@@ -67,6 +75,7 @@ plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
 
+#test the model
 print('\nTesting ------------')
 # Evaluate the model with the metrics we defined earlier
 loss, accuracy = model.evaluate(X_test, y_test)
