@@ -47,8 +47,8 @@ model.compile(optimizer=rmsprop,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-print('Training ------------')
 # train the model
+print('Training ------------')
 mf=model.fit(X_train, y_train, epochs=13 , batch_size=500, validation_data=(X_val, y_val))
 
 #Plotting the training and validation loss
@@ -83,13 +83,13 @@ print('test loss: ', loss)
 print('test accuracy: ', accuracy)
 
 ##Prediction##
+#view testing target picture
 X_test_0 = X_test[101,:].reshape(1,784)
 y_test_0 = y_test[101,:]
-plt.figure('Prediction Picture')
+plt.figure('Prediction Picture') 
 plt.imshow(X_test_0.reshape([28,28]))
-
+#predict testing sample by trained model 
 pred = model.predict(X_test_0[:])
-
 #real data label
 print('Label of testing sample', np.argmax(y_test_0))
 #predicted data
